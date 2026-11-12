@@ -8,12 +8,14 @@
           "name": "Name",
           "host": "Host",
           "port": "Port",
-          "password": "Passwort"
+          "password": "Passwort",
+          "add_offline": "Trotzdem hinzufügen (Rechner ist aus)"
         },
         "data_description": {
           "host": "Name oder IP-Adresse des Rechners.",
           "port": "Port der Poweroff-Fernsteuerung (Standard 3210).",
-          "password": "Passwort der Fernsteuerung; leer, wenn keins gesetzt ist."
+          "password": "Passwort der Fernsteuerung; leer, wenn keins gesetzt ist.",
+          "add_offline": "Das Passwort wird dann erst beim ersten Befehl geprüft."
         }
       },
       "reauth_confirm": {

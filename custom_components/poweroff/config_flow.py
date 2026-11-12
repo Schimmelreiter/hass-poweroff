@@ -25,6 +25,7 @@ from homeassistant.helpers.selector import (
 
 from .client import PoweroffAuthError, PoweroffClient, PoweroffConnectionError
 from .const import (
+    CONF_ADD_OFFLINE,
     CONF_FORCE,
     CONF_WARNING_MESSAGE,
     CONF_WARNING_SECONDS,
@@ -55,12 +56,16 @@ class PoweroffConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Ask for name, host, port and password."""
         errors: dict[str, str] = {}
+        offline = False
         if user_input is not None:
             host = user_input[CONF_HOST].strip()
             port = int(user_input[CONF_PORT])
             await self.async_set_unique_id(f"{host.lower()}:{port}")
             self._abort_if_unique_id_configured()
-            errors = await _validate(host, port, user_input.get(CONF_PASSWORD))
+            if user_input.get(CONF_ADD_OFFLINE):
+                errors = {}  # machine is off: password is checked on the first use
+            else:
+                errors = await _validate(host, port, user_input.get(CONF_PASSWORD))
             if not errors:
                 return self.async_create_entry(
                     title=user_input.get(CONF_NAME) or host,
@@ -70,19 +75,23 @@ class PoweroffConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_PASSWORD: user_input.get(CONF_PASSWORD, ""),
                     },
                 )
-        schema = vol.Schema(
-            {
-                vol.Optional(CONF_NAME): str,
-                vol.Required(CONF_HOST): str,
-                vol.Required(CONF_PORT, default=DEFAULT_PORT): vol.All(
-                    vol.Coerce(int), vol.Range(min=1, max=65535)
-                ),
-                vol.Optional(CONF_PASSWORD): PASSWORD_SELECTOR,
-            }
-        )
+            offline = errors.get("base") == "cannot_connect"
+        fields: dict[Any, Any] = {
+            vol.Optional(CONF_NAME): str,
+            vol.Required(CONF_HOST): str,
+            vol.Required(CONF_PORT, default=DEFAULT_PORT): vol.All(
+                vol.Coerce(int), vol.Range(min=1, max=65535)
+            ),
+            vol.Optional(CONF_PASSWORD): PASSWORD_SELECTOR,
+        }
+        if offline:
+            # switched-off machines can be added without the check
+            fields[vol.Optional(CONF_ADD_OFFLINE, default=False)] = bool
+        schema = vol.Schema(fields)
+        shown = {k: v for k, v in (user_input or {}).items() if k != CONF_ADD_OFFLINE}
         return self.async_show_form(
             step_id="user",
-            data_schema=self.add_suggested_values_to_schema(schema, user_input or {}),
+            data_schema=self.add_suggested_values_to_schema(schema, shown),
             errors=errors,
         )
 

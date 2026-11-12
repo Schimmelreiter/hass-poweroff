@@ -246,3 +246,18 @@ async def test_client_name_with_ipv6_and_ipv4(poweroff_server: FakePoweroff) -> 
     client = PoweroffClient("localhost", poweroff_server.port, "geheim", timeout=5)
     await client.async_send_command("lock")
     assert "ACTION lock" in poweroff_server.received[-1]
+
+
+async def test_flow_add_offline(hass: HomeAssistant, socket_enabled) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    data = {CONF_NAME: "HP-Book", CONF_HOST: "127.0.0.1", CONF_PORT: 1, CONF_PASSWORD: "x"}
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], data)
+    assert result["errors"] == {"base": "cannot_connect"}
+    assert "add_offline" in result["data_schema"].schema
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {**data, "add_offline": True}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert "add_offline" not in result["data"]

@@ -14,6 +14,7 @@ SCAN_INTERVAL: Final = timedelta(seconds=60)
 CONF_WARNING_SECONDS: Final = "warning_seconds"
 CONF_WARNING_MESSAGE: Final = "warning_message"
 CONF_FORCE: Final = "force"
+CONF_ADD_OFFLINE: Final = "add_offline"
 
 ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"
 ATTR_COMMAND: Final = "command"

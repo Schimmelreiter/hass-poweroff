@@ -8,12 +8,14 @@
           "name": "Name",
           "host": "Host",
           "port": "Port",
-          "password": "Password"
+          "password": "Password",
+          "add_offline": "Add anyway (machine is off)"
         },
         "data_description": {
           "host": "Name or IP address of the machine.",
           "port": "Remote control port of Poweroff (default 3210).",
-          "password": "Remote control password; empty if none is set."
+          "password": "Remote control password; empty if none is set.",
+          "add_offline": "The password is then only checked with the first command."
         }
       },
       "reauth_confirm": {
