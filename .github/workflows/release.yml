@@ -1,0 +1,35 @@
+name: Release
+
+# Creates tag v<version> and a GitHub release whenever the version in
+# custom_components/poweroff/manifest.json changes on main (or on demand).
+
+on:
+  push:
+    branches: [main]
+    paths: [custom_components/poweroff/manifest.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version from manifest.json
+        id: version
+        run: echo "version=$(jq -r .version custom_components/poweroff/manifest.json)" >> "$GITHUB_OUTPUT"
+      - name: Zip for the Marketplace
+        run: cd custom_components/poweroff && zip -r ../../poweroff.zip . -x '__pycache__/*'
+      - name: Create release (if the tag does not exist yet)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "Release v$VERSION exists already"
+          else
+            gh release create "v$VERSION" poweroff.zip --target "$GITHUB_SHA" \
+              --title "$VERSION" --generate-notes
+          fi
