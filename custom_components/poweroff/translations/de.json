@@ -1,0 +1,140 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rechner mit Poweroff",
+        "description": "Auf dem Windows-Rechner muss Poweroff (Jorgen Bosman) mit eingeschalteter Fernsteuerung laufen.",
+        "data": {
+          "name": "Name",
+          "host": "Host",
+          "port": "Port",
+          "password": "Passwort"
+        },
+        "data_description": {
+          "host": "Name oder IP-Adresse des Rechners.",
+          "port": "Port der Poweroff-Fernsteuerung (Standard 3210).",
+          "password": "Passwort der Fernsteuerung; leer, wenn keins gesetzt ist."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Poweroff-Passwort",
+        "description": "Poweroff auf {name} hat das Passwort abgelehnt.",
+        "data": {
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Poweroff antwortet nicht. Ist der Rechner an und die Fernsteuerung in Poweroff eingeschaltet?",
+      "invalid_auth": "Falsches Passwort."
+    },
+    "abort": {
+      "already_configured": "Dieser Rechner ist schon eingerichtet.",
+      "reauth_successful": "Passwort aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Einstellungen für die Tasten",
+        "data": {
+          "warning_seconds": "Vorwarnung vor der Aktion",
+          "warning_message": "Text der Vorwarnung",
+          "force": "Programme zwangsweise schließen"
+        },
+        "data_description": {
+          "warning_seconds": "0 = sofort, ohne Hinweis auf dem Rechner.",
+          "force": "Programme auch dann schließen, wenn sie noch speichern wollen."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "reachable": {
+        "name": "Poweroff erreichbar"
+      }
+    },
+    "button": {
+      "shutdown": {
+        "name": "Herunterfahren"
+      },
+      "reboot": {
+        "name": "Neu starten"
+      },
+      "standby": {
+        "name": "Standby"
+      },
+      "hibernate": {
+        "name": "Ruhezustand"
+      },
+      "lock": {
+        "name": "Sperren"
+      }
+    }
+  },
+  "selector": {
+    "command": {
+      "options": {
+        "shutdown": "Herunterfahren (wie Windows es tut)",
+        "poweroff": "Komplett ausschalten",
+        "reboot": "Neu starten",
+        "standby": "Standby",
+        "hibernate": "Ruhezustand",
+        "lock": "Sperren",
+        "logoff": "Abmelden",
+        "monitor_off": "Monitor aus",
+        "monitor_on": "Monitor an"
+      }
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Befehl senden",
+      "description": "Lässt Poweroff sofort eine Aktion auf seinem Rechner ausführen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Rechner",
+          "description": "Der Poweroff-Eintrag des Rechners."
+        },
+        "command": {
+          "name": "Befehl",
+          "description": "Was der Rechner tun soll."
+        },
+        "warning_seconds": {
+          "name": "Vorwarnung",
+          "description": "Sekunden Vorwarnung auf dem Rechner; leer = Einstellung des Eintrags."
+        },
+        "message": {
+          "name": "Text der Vorwarnung",
+          "description": "Wird während der Vorwarnung angezeigt; leer = Einstellung des Eintrags."
+        },
+        "force": {
+          "name": "Zwingen",
+          "description": "Programme zwangsweise schließen; leer = Einstellung des Eintrags."
+        },
+        "simulate": {
+          "name": "Nur simulieren",
+          "description": "Poweroff zeigt auf dem Rechner nur an, was es tun würde; das Fenster dort muss geschlossen werden, sonst blockiert es das nächste Herunterfahren."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "entry_not_found": {
+      "message": "Kein Poweroff-Eintrag mit dieser ID."
+    },
+    "entry_not_loaded": {
+      "message": "Poweroff-Eintrag {name} ist nicht geladen."
+    },
+    "auth_failed": {
+      "message": "Poweroff auf {name} hat das Passwort abgelehnt."
+    },
+    "cannot_connect": {
+      "message": "Poweroff auf {name} antwortet nicht: {error}"
+    },
+    "command_failed": {
+      "message": "Poweroff auf {name} hat den Befehl abgelehnt: {error}"
+    }
+  }
+}

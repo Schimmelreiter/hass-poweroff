@@ -1,0 +1,140 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Machine with Poweroff",
+        "description": "Poweroff (Jorgen Bosman) must run on the Windows machine with remote control enabled.",
+        "data": {
+          "name": "Name",
+          "host": "Host",
+          "port": "Port",
+          "password": "Password"
+        },
+        "data_description": {
+          "host": "Name or IP address of the machine.",
+          "port": "Remote control port of Poweroff (default 3210).",
+          "password": "Remote control password; empty if none is set."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Poweroff password",
+        "description": "Poweroff on {name} rejected the password.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Poweroff does not answer. Is the machine on and Poweroff's remote control enabled?",
+      "invalid_auth": "Wrong password."
+    },
+    "abort": {
+      "already_configured": "This machine is already set up.",
+      "reauth_successful": "Password updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Settings for the buttons",
+        "data": {
+          "warning_seconds": "Warning before the action",
+          "warning_message": "Warning text",
+          "force": "Force programs to close"
+        },
+        "data_description": {
+          "warning_seconds": "0 = act immediately without a warning on the machine.",
+          "force": "Close programs even if they ask to save."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "reachable": {
+        "name": "Poweroff reachable"
+      }
+    },
+    "button": {
+      "shutdown": {
+        "name": "Shut down"
+      },
+      "reboot": {
+        "name": "Restart"
+      },
+      "standby": {
+        "name": "Standby"
+      },
+      "hibernate": {
+        "name": "Hibernate"
+      },
+      "lock": {
+        "name": "Lock"
+      }
+    }
+  },
+  "selector": {
+    "command": {
+      "options": {
+        "shutdown": "Shut down (as Windows does it)",
+        "poweroff": "Power off completely",
+        "reboot": "Restart",
+        "standby": "Standby",
+        "hibernate": "Hibernate",
+        "lock": "Lock",
+        "logoff": "Log off",
+        "monitor_off": "Monitor off",
+        "monitor_on": "Monitor on"
+      }
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send command",
+      "description": "Lets Poweroff perform an action on its machine right away.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Machine",
+          "description": "The Poweroff entry of the machine."
+        },
+        "command": {
+          "name": "Command",
+          "description": "What the machine should do."
+        },
+        "warning_seconds": {
+          "name": "Warning",
+          "description": "Seconds of warning on the machine; empty = setting of the entry."
+        },
+        "message": {
+          "name": "Warning text",
+          "description": "Shown during the warning; empty = setting of the entry."
+        },
+        "force": {
+          "name": "Force",
+          "description": "Force programs to close; empty = setting of the entry."
+        },
+        "simulate": {
+          "name": "Simulate only",
+          "description": "Poweroff only shows on the machine what it would do; the window there must be closed, otherwise it blocks the next shutdown."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "entry_not_found": {
+      "message": "No Poweroff entry with this ID."
+    },
+    "entry_not_loaded": {
+      "message": "Poweroff entry {name} is not loaded."
+    },
+    "auth_failed": {
+      "message": "Poweroff on {name} rejected the password."
+    },
+    "cannot_connect": {
+      "message": "Poweroff on {name} does not answer: {error}"
+    },
+    "command_failed": {
+      "message": "Poweroff on {name} rejected the command: {error}"
+    }
+  }
+}

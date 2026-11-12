@@ -1,0 +1,17 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "reachable": { "default": "mdi:lan-connect", "state": { "off": "mdi:lan-disconnect" } }
+    },
+    "button": {
+      "shutdown": { "default": "mdi:power" },
+      "reboot": { "default": "mdi:restart" },
+      "standby": { "default": "mdi:power-sleep" },
+      "hibernate": { "default": "mdi:power-standby" },
+      "lock": { "default": "mdi:monitor-lock" }
+    }
+  },
+  "services": {
+    "send_command": { "service": "mdi:power-settings" }
+  }
+}

@@ -1,0 +1,41 @@
+send_command:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: poweroff
+    command:
+      required: true
+      default: shutdown
+      selector:
+        select:
+          translation_key: command
+          options:
+            - shutdown
+            - poweroff
+            - reboot
+            - standby
+            - hibernate
+            - lock
+            - logoff
+            - monitor_off
+            - monitor_on
+    warning_seconds:
+      selector:
+        number:
+          min: 0
+          max: 3600
+          unit_of_measurement: s
+          mode: box
+    message:
+      selector:
+        text:
+          multiline: true
+    force:
+      selector:
+        boolean:
+    simulate:
+      default: false
+      selector:
+        boolean:
