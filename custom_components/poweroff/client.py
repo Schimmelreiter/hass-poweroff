@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import socket
 from dataclasses import dataclass
 
 from .const import COMMANDS, DEFAULT_TIMEOUT
@@ -66,8 +65,9 @@ class PoweroffClient:
         self._attempts = attempts
         self._retry_delay = retry_delay
         self._lock = asyncio.Lock()
-        # Poweroff listens on IPv4 only; names that also resolve to IPv6 would hang there.
-        self._family = socket.AF_INET6 if ":" in host else socket.AF_INET
+        # Original Poweroff (3.0.1.x) listens on IPv4 only; a name that also resolves to IPv6
+        # then hangs there. Happy eyeballs tries the next address after 0.3 s, so IPv4 and
+        # Poweroff 3.0.2 (IPv6) both work.
 
     async def _read_line(self, reader: asyncio.StreamReader) -> str:
         try:
@@ -96,7 +96,8 @@ class PoweroffClient:
         """Connect, authenticate, run the commands, disconnect."""
         try:
             reader, writer = await asyncio.wait_for(
-                asyncio.open_connection(self.host, self.port, family=self._family), self._timeout
+                asyncio.open_connection(self.host, self.port, happy_eyeballs_delay=0.3),
+                self._timeout,
             )
         except (OSError, TimeoutError) as err:
             raise PoweroffConnectionError(
@@ -166,7 +167,8 @@ class PoweroffClient:
     async def _session_greeting_only(self) -> None:
         try:
             reader, writer = await asyncio.wait_for(
-                asyncio.open_connection(self.host, self.port, family=self._family), self._timeout
+                asyncio.open_connection(self.host, self.port, happy_eyeballs_delay=0.3),
+                self._timeout,
             )
         except (OSError, TimeoutError) as err:
             raise PoweroffConnectionError(str(err)) from err

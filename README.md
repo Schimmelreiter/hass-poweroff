@@ -8,8 +8,10 @@ through the remote control of Poweroff by Jorgen Bosman
 
 - Poweroff running on the Windows machine (as a program or service) with **remote control**
   enabled; note the port (default 3210) and the password.
-- The machine reachable from Home Assistant on that port over **IPv4** (Poweroff does not
-  listen on IPv6; host names are resolved to IPv4 by the integration).
+- The machine reachable from Home Assistant on that port. The original Poweroff (3.0.1.x)
+  listens on IPv4 only, [Poweroff 3.0.2](https://github.com/Schimmelreiter/poweroff) also on
+  IPv6. For names with both addresses the integration tries them in parallel (happy eyeballs),
+  so either version works.
 
 ## Installation
 

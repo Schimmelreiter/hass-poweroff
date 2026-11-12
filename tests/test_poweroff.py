@@ -239,3 +239,10 @@ async def test_unload(hass: HomeAssistant, poweroff_server: FakePoweroff) -> Non
     await _setup(hass, entry)
     assert await hass.config_entries.async_unload(entry.entry_id)
     assert entry.state is ConfigEntryState.NOT_LOADED
+
+
+async def test_client_name_with_ipv6_and_ipv4(poweroff_server: FakePoweroff) -> None:
+    """localhost resolves to ::1 (nobody listening) and 127.0.0.1 -> must still work."""
+    client = PoweroffClient("localhost", poweroff_server.port, "geheim", timeout=5)
+    await client.async_send_command("lock")
+    assert "ACTION lock" in poweroff_server.received[-1]
