@@ -60,7 +60,8 @@ class PoweroffConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             host = user_input[CONF_HOST].strip()
             port = int(user_input[CONF_PORT])
-            await self.async_set_unique_id(f"{host.lower()}:{port}")
+            # a form left open (e.g. "machine is off") must not block a new attempt
+            await self.async_set_unique_id(f"{host.lower()}:{port}", raise_on_progress=False)
             self._abort_if_unique_id_configured()
             if user_input.get(CONF_ADD_OFFLINE):
                 errors = {}  # machine is off: password is checked on the first use

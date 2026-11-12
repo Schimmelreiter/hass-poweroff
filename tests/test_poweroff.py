@@ -261,3 +261,20 @@ async def test_flow_add_offline(hass: HomeAssistant, socket_enabled) -> None:
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert "add_offline" not in result["data"]
+
+
+async def test_flow_left_open_does_not_block(hass: HomeAssistant, socket_enabled) -> None:
+    data = {CONF_HOST: "127.0.0.1", CONF_PORT: 1, CONF_PASSWORD: "x"}
+    first = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    await hass.config_entries.flow.async_configure(first["flow_id"], data)
+    second = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(second["flow_id"], data)
+    assert result["errors"] == {"base": "cannot_connect"}  # not "already_in_progress"
+    result = await hass.config_entries.flow.async_configure(
+        second["flow_id"], {**data, "add_offline": True}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
